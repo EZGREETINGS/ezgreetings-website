@@ -60,7 +60,128 @@
             </div>
         </section>
     </main>
+<section style="
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 80px 20px;
+        text-align: center;
+        color: white;
+    ">
+        <div style="max-width: 600px; margin: 0 auto;">
+            <h2 style="font-size: 2.5rem; margin-bottom: 20px; font-weight: 700;">Join the Waitlist</h2>
+            <p style="font-size: 1.2rem; margin-bottom: 30px; opacity: 0.95;">
+                Be the first to know when we launch on Valentine's Day 2026
+            </p>
+            
+            <form id="waitlist-form" style="
+                display: flex;
+                gap: 10px;
+                max-width: 500px;
+                margin: 0 auto;
+                flex-wrap: wrap;
+                justify-content: center;
+            ">
+                <input 
+                    type="email" 
+                    id="waitlist-email"
+                    name="email"
+                    placeholder="Enter your email address" 
+                    required
+                    style="
+                        flex: 1;
+                        min-width: 280px;
+                        padding: 16px 20px;
+                        font-size: 1rem;
+                        border: none;
+                        border-radius: 8px;
+                        outline: none;
+                    "
+                />
+                <button 
+                    type="submit"
+                    style="
+                        padding: 16px 40px;
+                        font-size: 1rem;
+                        font-weight: 600;
+                        background: white;
+                        color: #667eea;
+                        border: none;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        transition: transform 0.2s;
+                    "
+                    onmouseover="this.style.transform='scale(1.05)'"
+                    onmouseout="this.style.transform='scale(1)'"
+                >
+                    Join Waitlist
+                </button>
+            </form>
+            
+            <div id="waitlist-message" style="
+                margin-top: 20px;
+                font-size: 1.1rem;
+                display: none;
+                padding: 15px;
+                border-radius: 8px;
+                background: rgba(255, 255, 255, 0.2);
+            "></div>
+            
+            <p style="
+                margin-top: 20px;
+                font-size: 0.9rem;
+                opacity: 0.8;
+            ">
+                🎯 Early access • 🎁 Special launch offers • 💌 Never forget important dates
+            </p>
+        </div>
+    </section>
 
+    <script>
+    document.getElementById('waitlist-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const email = document.getElementById('waitlist-email').value;
+        const messageDiv = document.getElementById('waitlist-message');
+        const submitButton = e.target.querySelector('button[type="submit"]');
+        
+        // Disable button and show loading
+        submitButton.disabled = true;
+        submitButton.textContent = 'Joining...';
+        
+        try {
+            const response = await fetch('http://YOUR-ELASTIC-IP:5678/webhook/waitlist-signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    source: 'homepage'
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                messageDiv.style.display = 'block';
+                messageDiv.style.background = 'rgba(72, 187, 120, 0.3)';
+                messageDiv.innerHTML = '✅ Success! Check your email for confirmation.';
+                document.getElementById('waitlist-email').value = '';
+            } else {
+                messageDiv.style.display = 'block';
+                messageDiv.style.background = 'rgba(245, 101, 101, 0.3)';
+                messageDiv.innerHTML = '❌ ' + (data.message || 'Please enter a valid email address.');
+            }
+        } catch (error) {
+            messageDiv.style.display = 'block';
+            messageDiv.style.background = 'rgba(245, 101, 101, 0.3)';
+            messageDiv.innerHTML = '❌ Something went wrong. Please try again.';
+        }
+        
+        // Re-enable button
+        submitButton.disabled = false;
+        submitButton.textContent = 'Join Waitlist';
+    });
+    </script>
     <footer>
         <div class="container">
             <div class="footer-content">
