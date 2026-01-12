@@ -207,5 +207,335 @@
             </div>
         </div>
     </footer>
+<!-- EZ Greetings AI Chatbot Widget -->
+<style>
+  /* Chat Widget Styles */
+  #ez-chat-widget {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+
+  #ez-chat-button {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+  }
+
+  #ez-chat-button:hover {
+    transform: scale(1.1);
+  }
+
+  #ez-chat-button svg {
+    width: 28px;
+    height: 28px;
+    fill: white;
+  }
+
+  #ez-chat-container {
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    width: 350px;
+    height: 500px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  #ez-chat-container.open {
+    display: flex;
+  }
+
+  #ez-chat-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 16px;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  #ez-chat-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #ez-chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: #f7f7f7;
+  }
+
+  .ez-message {
+    max-width: 80%;
+    padding: 10px 14px;
+    border-radius: 12px;
+    word-wrap: break-word;
+    line-height: 1.4;
+  }
+
+  .ez-message-user {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+  }
+
+  .ez-message-bot {
+    background: white;
+    color: #333;
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  }
+
+  .ez-message-bot a {
+    color: #667eea;
+    text-decoration: underline;
+  }
+
+  .ez-typing {
+    display: flex;
+    gap: 4px;
+    padding: 10px 14px;
+  }
+
+  .ez-typing span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #999;
+    animation: typing 1.4s infinite;
+  }
+
+  .ez-typing span:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  .ez-typing span:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+
+  @keyframes typing {
+    0%, 60%, 100% {
+      transform: translateY(0);
+    }
+    30% {
+      transform: translateY(-10px);
+    }
+  }
+
+  #ez-chat-input-container {
+    padding: 16px;
+    background: white;
+    border-top: 1px solid #e0e0e0;
+    display: flex;
+    gap: 8px;
+  }
+
+  #ez-chat-input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    outline: none;
+    font-size: 14px;
+  }
+
+  #ez-chat-input:focus {
+    border-color: #667eea;
+  }
+
+  #ez-chat-send {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #ez-chat-send:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  #ez-chat-send svg {
+    width: 20px;
+    height: 20px;
+    fill: white;
+  }
+
+  /* Mobile responsive */
+  @media (max-width: 480px) {
+    #ez-chat-container {
+      width: calc(100vw - 40px);
+      height: calc(100vh - 140px);
+      right: 20px;
+      bottom: 100px;
+    }
+  }
+</style>
+
+<!-- Chat Widget HTML -->
+<div id="ez-chat-widget">
+  <!-- Chat Button -->
+  <button id="ez-chat-button" aria-label="Open chat">
+    <svg viewBox="0 0 24 24">
+      <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+    </svg>
+  </button>
+
+  <!-- Chat Container -->
+  <div id="ez-chat-container">
+    <div id="ez-chat-header">
+      <span>EZ Greetings Support</span>
+      <button id="ez-chat-close" aria-label="Close chat">&times;</button>
+    </div>
+    
+    <div id="ez-chat-messages">
+      <div class="ez-message ez-message-bot">
+        Hi! I'm the EZ Greetings support assistant. How can I help you today?
+      </div>
+    </div>
+    
+    <div id="ez-chat-input-container">
+      <input 
+        type="text" 
+        id="ez-chat-input" 
+        placeholder="Type your message..."
+        autocomplete="off"
+      />
+      <button id="ez-chat-send" aria-label="Send message">
+        <svg viewBox="0 0 24 24">
+          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // EZ Greetings Chatbot Script
+  (function() {
+    const WEBHOOK_URL = 'https://finn-cinnamoyl-recollectedly.ngrok-free.dev/webhook/chatbot';
+    
+    const chatButton = document.getElementById('ez-chat-button');
+    const chatContainer = document.getElementById('ez-chat-container');
+    const chatClose = document.getElementById('ez-chat-close');
+    const chatMessages = document.getElementById('ez-chat-messages');
+    const chatInput = document.getElementById('ez-chat-input');
+    const chatSend = document.getElementById('ez-chat-send');
+
+    // Toggle chat
+    chatButton.addEventListener('click', () => {
+      chatContainer.classList.add('open');
+      chatInput.focus();
+    });
+
+    chatClose.addEventListener('click', () => {
+      chatContainer.classList.remove('open');
+    });
+
+    // Send message function
+    async function sendMessage() {
+      const message = chatInput.value.trim();
+      if (!message) return;
+
+      // Add user message
+      addMessage(message, 'user');
+      chatInput.value = '';
+      chatSend.disabled = true;
+
+      // Show typing indicator
+      const typingDiv = document.createElement('div');
+      typingDiv.className = 'ez-message ez-message-bot ez-typing';
+      typingDiv.innerHTML = '<span></span><span></span><span></span>';
+      chatMessages.appendChild(typingDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      try {
+        // Call N8N webhook
+        const response = await fetch(WEBHOOK_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ message: message })
+        });
+
+        // Remove typing indicator
+        typingDiv.remove();
+
+        if (response.ok) {
+          const data = await response.json();
+          addMessage(data.response || 'Sorry, I couldn\'t process that.', 'bot');
+        } else {
+          addMessage('Sorry, I\'m having trouble connecting. Please try again or email support@ezgreetings.net', 'bot');
+        }
+      } catch (error) {
+        typingDiv.remove();
+        addMessage('Sorry, I\'m having trouble connecting. Please try again or email support@ezgreetings.net', 'bot');
+      }
+
+      chatSend.disabled = false;
+    }
+
+    // Add message to chat
+    function addMessage(text, sender) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `ez-message ez-message-${sender}`;
+      
+      // Convert email addresses to clickable links
+      const emailPattern = /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/gi;
+      text = text.replace(emailPattern, '<a href="mailto:$1">$1</a>');
+      
+      messageDiv.innerHTML = text;
+      chatMessages.appendChild(messageDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Send on button click
+    chatSend.addEventListener('click', sendMessage);
+
+    // Send on Enter key
+    chatInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        sendMessage();
+      }
+    });
+  })();
+</script>
 </body>
 </html>
